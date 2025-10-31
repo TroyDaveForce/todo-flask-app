@@ -22,13 +22,13 @@ TEMPLATE = """
         <button>Add</button>
     </form>
     <ul>
-        {% for i, task in enumerate(tasks) %}
-        <li>
-            <span class="{{ 'done' if task.done else '' }}">{{ task.text }}</span>
-            <a href="/toggle/{{ i }}">Toggle</a>
-            <a href="/delete/{{ i }}" style="color:red">Delete</a>
-        </li>
-        {% endfor %}
+    {% for i, task in tasks %}
+    <li>
+        <span class="{{ 'done' if task.done else '' }}">{{ task.text }}</span>
+        <a href="/toggle/{{ i }}">Toggle</a>
+        <a href="/delete/{{ i }}" style="color:red">Delete</a>
+    </li>
+    {% endfor %}
     </ul>
     <script>
         // Auto-save to localStorage
@@ -46,7 +46,10 @@ def index():
     global tasks
     if request.method == 'POST':
         tasks.append({"text": request.form['task'], "done": False})
-    return render_template_string(TEMPLATE, tasks=tasks)
+    
+    # Pass enumerated tasks to template
+    enumerated_tasks = [(i, task) for i, task in enumerate(tasks)]
+    return render_template_string(TEMPLATE, tasks=enumerated_tasks)
 
 @app.route('/toggle/<int:i>')
 def toggle(i):
